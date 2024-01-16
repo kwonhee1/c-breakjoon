@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include<stdlib.h>
 
+// p. 118
+
 int dx[4] = { -1,0,1,0 }; int dy[4] = {0,1,0,-1};
 // 북 동 남 서  -> 서 남 동 북
 
