@@ -5,8 +5,10 @@
 #define swap(a,b); {int buff = a; a = b; b= buff;}
 #define swap_(a,b); {int* buff =a; a=b; b=buff;}
 
-void sort(int* arr, int* start, int* end);
-//void sort2(int* arr, int start, int end);
+void q_sort(int* arr, int* start, int* end);
+//void q_sort2(int* arr, int start, int end);
+void h_sort(int* arr, int index);
+
 int find(int* arr, int start, int end, int value);
 int main() {
 	
@@ -19,9 +21,15 @@ int main() {
 		scanf("%d", n_arr_++);
 	}
 
-	//sort2(n_arr, 0, n-1);
-	sort(n_arr, n_arr, &n_arr[n-1]);
-	
+	//q_sort2(n_arr, 0, n-1);
+	//q_sort(n_arr, n_arr, &n_arr[n-1]);
+
+	h_sort(n_arr,n-1);
+	/*n_arr_ = n_arr;
+	for (int i = 0; i < n; i++) {
+		printf("%d", *n_arr_++);
+	}
+	printf("\n");*/
 	int m, in;
 	scanf("%d", &m);
 	for (; m != 0; m--) {
@@ -44,7 +52,34 @@ int find(int* arr, int start, int end, int value) { // return index or -1
 	else {return -1;}
 }
 
-void sort(int* arr, int* start, int* end) { //3
+void h_sort_(int* arr, int index) {
+	if (index < 3) {
+		swap(arr[0], arr[index]);
+	}
+	else { h_sort_(arr, (index >> 1) - 1); swap(arr[index], arr[(index >> 1) - 1]); }
+}
+
+void h_sort(int *arr, int index) { //제일 큰 값을 찾아서 뒤로 보내기 -> 오름차순 정렬
+	for (; index > 2; index--) { // 맨위 3개(0~2) 는 따로 계산 
+		// 한회차 정렬 ( 가장 큰값 맨 위로)
+		for (int i = index; i > 2; i--) {
+			// 부모 노드와 비교 후  교환
+			if (arr[i] > arr[ (i>>1) - 1]) { swap(arr[i], arr[ (i>>1)-1]); }
+		}
+		// (0~2) 까지 계산
+		if (arr[2] > arr[0]) { swap(arr[2], arr[0]); }
+		if (arr[1] > arr[0]) { swap(arr[1], arr[0]); }
+		//header node 맨 밑으로
+		h_sort_(arr, index);
+		//swap(arr[0], arr[index_]);
+	}
+	// 마지막 3개 정렬 -> 제일 작은 값이 앞으로 가게
+	if (arr[2] < arr[1]) { swap(arr[2], arr[1]); }
+	if (arr[1] < arr[0]) { swap(arr[1], arr[0]); }
+	if (arr[2] < arr[1]) { swap(arr[2], arr[1]); }
+}
+
+void q_sort(int* arr, int* start, int* end) { //3
 	if (end - start < 1) {
 	}
 	else if (end - start == 1) {
@@ -71,13 +106,13 @@ void sort(int* arr, int* start, int* end) { //3
 			left--;
 			swap(*left, *start);
 		}
-		sort(arr, start, left-1);
-		sort(arr, left+1, end);
+		q_sort(arr, start, left-1);
+		q_sort(arr, left+1, end);
 	}
 }
 
 //
-//void sort2(int* arr, int start, int end) { //측정 불가
+//void q_sort2(int* arr, int start, int end) { //측정 불가
 //	if (end - start < 1) {
 //	}
 //	else if (end - start == 1) {
@@ -105,8 +140,8 @@ void sort(int* arr, int* start, int* end) { //3
 //			swap(arr[left], arr[start]);
 //		}
 //
-//		sort2(arr, start, left - 1);
-//		sort2(arr, left + 1, end);
+//		q_sort2(arr, start, left - 1);
+//		q_sort2(arr, left + 1, end);
 //	}
 //}
 
