@@ -1,6 +1,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include<stdlib.h>
+// #include<stdlib.h>
+#include <algorithm>
+
+/*
+	퀵 정렬 => 시간 초과
+	힙 정렬 => 시간 초과
+	std::sort() => 결국 성공
+
+	나중에 언젠가 이진 탐색 하고 더 빠른 정렬을 구현 한다면 다시 시도해 보자 
+*/
 
 #define swap(a,b); {int buff = a; a = b; b= buff;}
 #define swap_(a,b); {int* buff =a; a=b; b=buff;}
@@ -8,8 +17,10 @@
 void q_sort(int* arr, int* start, int* end);
 //void q_sort2(int* arr, int start, int end);
 void h_sort(int* arr, int index);
+void h_sort2(int* arr, int index);
 
 int find(int* arr, int start, int end, int value);
+bool f(int a, int b) { return a < b; }
 int main() {
 	
 	int n;
@@ -24,7 +35,9 @@ int main() {
 	//q_sort2(n_arr, 0, n-1);
 	//q_sort(n_arr, n_arr, &n_arr[n-1]);
 
-	h_sort(n_arr,n-1);
+	//h_sort(n_arr,n-1);
+	h_sort2(n_arr,n-1);
+	//std::sort(n_arr, n_arr + n,f);
 	/*n_arr_ = n_arr;
 	for (int i = 0; i < n; i++) {
 		printf("%d", *n_arr_++);
@@ -77,6 +90,22 @@ void h_sort(int *arr, int index) { //제일 큰 값을 찾아서 뒤로 보내�
 	if (arr[2] < arr[1]) { swap(arr[2], arr[1]); }
 	if (arr[1] < arr[0]) { swap(arr[1], arr[0]); }
 	if (arr[2] < arr[1]) { swap(arr[2], arr[1]); }
+}
+
+void h_sort2_(int* arr, int index) {
+	if (index != 1) { h_sort2_(arr, index >> 1); swap(arr[index], arr[index>>1]); }
+}
+
+void h_sort2(int* arr, int index) {
+	arr--; //header node의 index 번호를 1번으로 설정 => 절대 arr[0] 참조 금지!
+	index++;
+	for (; index != 1; index--) {
+		for (int i = index; i != 1; i--) {
+			if (arr[i] > arr[i >> 1]) { swap(arr[i], arr[i>>1]); }
+		}
+		//swap(arr[index], arr[1]);
+		h_sort2_(arr,index);
+	}
 }
 
 void q_sort(int* arr, int* start, int* end) { //3
