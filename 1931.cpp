@@ -7,8 +7,14 @@ struct dis {
 	int end;
 };
 
-int compare(const void *a, const void* b) {
-	return ((struct dis*)a)->end > ((struct dis*)b)->end;
+int compare(const void* a, const void* b) {
+	// ë ì‹œê°„ì´ ê°™ë‹¤ë©´ ì‹œì‘ ì‹œê°„ ê¸°ì¤€
+	if (((struct dis*)a)->end == ((struct dis*)b)->end) {
+		return ((struct dis*)a)->start > ((struct dis*)b)->start;
+	}
+	else {
+		return ((struct dis*)a)->end > ((struct dis*)b)->end;
+	}
 }
 
 int main() {
@@ -16,24 +22,24 @@ int main() {
 	scanf("%d", &n);
 	struct dis* arr = new struct dis[n];
 
-	//struct dis arr ÀÔ·Â
+	//struct dis arr ì…ë ¥
 	for (struct dis* arr_ = arr; arr_ < arr + n; arr_++) {
 		scanf("%d %d", &arr_->start, &arr_->end);
 	}
 
-	//Á¤·Ä
+	//ì •ë ¬
 	qsort(arr, n, sizeof(struct dis), compare);
 
-	//Á¤·Ä È®ÀÎ
+	//ì •ë ¬ í™•ì¸
 	/*for (struct dis* arr_ = arr; arr_ < arr + n; arr_++) {
 		printf("(%d,%d) ", arr_->start, arr_->end);
 	}*/
 
-	//½ÇÇà Á¤·ÄµÈ ¹è¿­À» µ¹¸é¼­ °¡´ÉÇÏ´Ù¸é ¹Ş±â
+	//ì‹¤í–‰ ì •ë ¬ëœ ë°°ì—´ì„ ëŒë©´ì„œ ê°€ëŠ¥í•˜ë‹¤ë©´ ë°›ê¸°
 	int end_time = 0, re = 0;
 	for (struct dis* arr_ = arr; arr_ < arr + n; arr_++) {
-		if (end_time < arr_->start) {
-			// »ç¿ë°¡´É
+		if (end_time <= arr_->start) {
+			// ì‚¬ìš©ê°€ëŠ¥
 			re++;
 			end_time = arr_->end;
 		}
