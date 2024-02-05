@@ -9,7 +9,7 @@ struct ob {
 };
 
 int compare (const void* a, const void* b) {
-	// ¹«°Ô°¡ °°À¸¸é -> value³ôÀº ¼ø
+	// ë¬´ê²Œê°€ ê°™ìœ¼ë©´ -> valueë†’ì€ ìˆœ
 	return ((struct ob*)a)->weight > ((struct ob*) b)->weight;
 }
 
@@ -17,16 +17,16 @@ int max_weight, max_n, min_weight;
 int* arr;
 struct ob* obs;
 
-int f(int weight, int n) { //n¹øÂ° ¹°°Ç + weight
+int f(int weight, int n) { //në²ˆì§¸ ë¬¼ê±´ + weight
 	if (!arr[n * max_weight + weight]) {
 		int* arr_ = &arr[n * max_weight + weight];
-		// ÀÔ·ÂµÈ ¹«°Ô°¡ 2¹øÂ° ¹°Ã¼ÀÇ ¹«°Ôº¸´Ù ÀÛÀ»¶§
-		// ¶Ç´Â ÀÔ·ÂµÈ °³¼ö°¡ 0°³ÀÏ¶§
+		// ì…ë ¥ëœ ë¬´ê²Œê°€ 2ë²ˆì§¸ ë¬¼ì²´ì˜ ë¬´ê²Œë³´ë‹¤ ì‘ì„ë•Œ
+		// ë˜ëŠ” ì…ë ¥ëœ ê°œìˆ˜ê°€ 0ê°œì¼ë•Œ
 		if (weight < min_weight || !n) { 
 			if (weight < obs[0].weight) { *arr_ = 0; }
 			else { *arr_ = obs[0].value; }
 		}
-		//±¸ÇÒ¼ö ¾ø´Ù¸é ³ª´®
+		//êµ¬í• ìˆ˜ ì—†ë‹¤ë©´ ë‚˜ëˆ”
 		else {
 			int buff, buff2;
 			//arr[n][weight] = arr[n-1][weight-obs[n].weight] + obs[n].value > arr[n-1][weight] ? buff : buff2;
@@ -46,27 +46,27 @@ int main() {
 	arr = new int[max_weight*max_n+1]{0,}; // arr[weight][n] => weight*n + n
 	obs = new struct ob[max_n];
 
-	//ÀÔ·Â
+	//ì…ë ¥
 	for (struct ob* obs_ = obs; obs_ < obs + max_n; obs_++)
 		scanf("%d %d", &obs_->weight, &obs_->value);
 
-	//Á¤·Ä  ¹«°Å¿î°Ô µÚ·Î
+	//ì •ë ¬  ë¬´ê±°ìš´ê²Œ ë’¤ë¡œ
 	qsort(obs, max_n, sizeof(obs), compare);
 
-	//Á¤·Ä È®ÀÎ 
+	//ì •ë ¬ í™•ì¸ 
 	/*for (int i = 0; i < max_n; i++) {
 		printf("%d > weight:%d, value:%d\n",i, obs[i].weight, obs[i].value);
 	}
 	printf("\n");*/
 
-	// max_weight¸¦ ³Ñ¾î°¡´Â °ª ¸ğµÎ Á¦¿ÜÇÏ±â
+	// max_weightë¥¼ ë„˜ì–´ê°€ëŠ” ê°’ ëª¨ë‘ ì œì™¸í•˜ê¸°
 	int i= max_n-1;
 	for (; i >= 0; i--) {
-		//Ã³À½ max_weightº¸´Ù ´õ ÀÛÀº i¿¡¼­ ¸ØÃã
+		//ì²˜ìŒ max_weightë³´ë‹¤ ë” ì‘ì€ iì—ì„œ ë©ˆì¶¤
 		if (obs[i].weight <= max_weight) { break; }
 	}
 
-	//ÁÖ¹øÂ°·Î ÀÛÀº °ª
+	//ì£¼ë²ˆì§¸ë¡œ ì‘ì€ ê°’
 	if (i >= 1) { 
 		min_weight = obs[1].weight;
 		//printf("min_weight : %d\n", min_weight);
