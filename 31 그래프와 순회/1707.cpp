@@ -1,99 +1,105 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-struct que {
-	int value;
-	int x;
-	int y;
-	struct que* next;
+struct vertex {
+	int node;
+	struct vertex* next;
 
-	que(int v, int x_, int y_) {
-		x = x_; y = y_; value = v; next = NULL;
+	vertex(int no, struct vertex* n) {
+		node = no; next = n;
+	}
+	vertex() { next = NULL; node = 0; }
+};
+
+struct que {
+	int node;
+	int value;
+	struct que* next;
+	que(int n, int v) {
+		node = n; value = v;
+		next = NULL;
 	}
 };
 
-//add que 
-// end = end->next = new struct que(v,x,y);
+int flag;
+struct vertex* arr;
 
-struct que* start, * end;
-
-int n, m, **arr;
+int f(struct que* start, struct que* end);
 
 int main() {
-	int dx[5] = {0, 1,-1,0,0 }, dy[5] = {0, 0,0,1,-1 };
+	int n, m, all;
+	scanf("%d", &all);
+	while (all--) {
 
-	scanf("%d %d", &n, &m);
-	arr = new int* [m];
+		flag = 1;
+		scanf("%d %d", &n, &m);
+		arr = new struct vertex[n + 1];
 
-	start = end = new struct que(0,0,0); //trash value -> erase before start
-
-	for (int y = 0; y < m; y++) {
-		arr[y] = new int[n];
-		for (int x = 0, buff; x < n; x++) {
-			scanf("%d", &buff);
-			arr[y][x] = buff;
-			if(buff == 1)
-				end = end->next = new struct que(1, x, y);
+		while (m--) {
+			int a, b;
+			scanf("%d %d", &a, &b);
+			arr[a].next = new struct vertex(b, arr[a].next);
+			arr[b].next = new struct vertex(a, arr[b].next);
 		}
-	}
 
-	//check input
-	/*for (int y = 0; y < m; y++) {
-		for (int x = 0, buff; x < n; x++) {
-			printf("%d ", arr[y][x]);
-		}
-		printf("\n");
-	}
-	printf("end check\n");*/
+		/*for (int i = 1; i <= n; i++) {
+			for (struct vertex* k = arr[i].next; k; k = k->next) {
+				printf("%d -> %d\n", i, k->node);
+			}
+		}*/
 
-	start = start->next;
-	if (start == NULL) {
-		// no ripe tomato
-		printf("-1");
-		return 0;
-	}
+		// input any first node to start
+		struct que* start;
+		arr[1].node = 1;
+		struct que* end = start = new struct que(1, -1);
 
-	int v;
-	do {
-		int x = start->x, y = start->y; v = start->value;
-		
-		//printf("(%d,%d)=%d\n", x, y, v);
-
-		//if updated by other -> continue
-		if (arr[y][x] < v) { continue; }
-		arr[y][x] = v++;
-		for (int i = 4; i != 0; i--) {
-			int x_ = x + dx[i], y_ = y + dy[i];
-			if(0<=x_ && x_<n && 0<=y_ && y_<m){
-				if (arr[y_][x_] && arr[y_][x_] <= v) { continue; }
-				arr[y_][x_] = v;
-				end = end->next = new struct que(v, x_, y_);
+		while (f(start,end)) {
+			int flag2 = 1;
+			int i  = 1;
+			while(i<=n){
+				if (!arr[i].node) { flag2 = 0; break; }
+				i++;
+			}
+			if (flag2) { break; }
+			else {
+				arr[i].node = 1;
+				start = end = new struct que(i,-1);
 			}
 		}
 
+		if (flag) printf("YES\n");
+		else printf("NO\n");
+
+		for (struct vertex* i = arr; i <= arr + n; i++) {
+			while (i->next) {
+				struct vertex* old = i->next;
+				i->next = i->next->next;
+				delete old;
+			}
+		}
+		delete[] arr;
+	}
+}
+
+int f(struct que*start, struct que*end) {
+
+	while (start) {
+		//printf("\n%d(%d) >> ", start->node, start->value);
+		for (struct vertex* i = arr[start->node].next; i; i = i->next) {
+			//printf("%d(%d) ", i->node, arr[i->node].node);
+			if (!arr[i->node].node) { //empty -> input que
+				arr[i->node].node = start->value;
+				end = end->next = new struct que(i->node, start->value > 0 ? -1 : 1);
+				//printf("->%d ", start->value > 0 ? -1 : 1);
+			}
+			else if (arr[i->node].node != start->value) { //NO
+				start->next = NULL; flag = 0; return 0;
+			}
+			// continue;
+		}
 		struct que* old = start;
 		start = start->next;
 		delete old;
-	} while (start);
-
-	/*printf("end and check again\n");
-	for (int y = 0; y < m; y++) {
-		for (int x = 0, buff; x < n; x++) {
-			printf("%d ", arr[y][x]);
-		}
-		printf("\n");
 	}
-	printf("end check\n");*/
-
-	// check left 0 in arr -> all tomato cannot be ripe
-	int flag = 0;
-	for (int** i = arr; i < arr + m; i++) {
-		for (int* j = *i; j < *i + n; j++) {
-			if (!*j) { printf("-1"); flag = 1; break; }
-		}
-		if (flag) { break; }
-	}
-	if (!flag) {
-		printf("%d", v - 2);
-	}
+	return 1;
 }
