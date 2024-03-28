@@ -19,18 +19,15 @@ int main() {
 	scanf("%d %d", &start, &end);
 
 	if (start > end) { printf("%d", start - end); return 0; }
-	if (start == 1) { printf("0"); return 0; }
-	if (start == 2) {
-		if (end % 2) printf("1");
-		else  printf("0");
-		return 0;
-	}
+	if (start == end) { printf("0"); return 0; }
 
 	arr = new int[150001] {0, };
 	que_start = que_end = new struct que(1, start);
+	if (start == 0) {
+		que_start = que_end = new struct que(2, 1);
+	}
 
 	do {
-		// 이전에 계산한적이 없다면
 		if (!arr[que_start->node]) {
 			//printf("%d >> ", que_start->node);
 			for(int i = que_start->node; i<150001; i=i<<1){
